@@ -1,0 +1,36 @@
+ARG BASE_IMAGE=debian:trixie
+
+FROM ${BASE_IMAGE} AS builder
+
+RUN apt-get update && apt-get install -y \
+	autoconf automake debhelper libtool pkg-config gettext libjson-c-dev flex bison libpcap-dev \
+	rrdtool librrd-dev parallel \
+	libpcre2-dev \
+	git build-essential
+
+RUN apt-get update && apt-get install -y \
+	cmake gcc libssl-dev liblua5.1-0-dev
+
+ARG ACCEL_PPP_BRANCH=master
+
+COPY branch/${ACCEL_PPP_BRANCH} /root/accel-ppp
+# RUN cd /root && git clone --depth=1 -b ${ACCEL_PPP_BRANCH} https://github.com/accel-ppp/accel-ppp.git
+
+RUN mkdir /root/accel-ppp/build
+
+WORKDIR /root/accel-ppp/build
+
+RUN cmake \
+	-DBUILD_IPOE_DRIVER=FALSE \
+	-DBUILD_VLAN_MON_DRIVER=FALSE \
+	-DCMAKE_INSTALL_PREFIX=/usr \
+	-DLUA=TRUE \
+	-DCPACK_TYPE=Debian11 \
+	..
+
+RUN make -j$(nproc)
+RUN cpack -G DEB
+
+FROM scratch
+COPY --from=builder /root/accel-ppp/build/accel-ppp.deb /
+
