@@ -38,4 +38,4 @@ function build_branch() {
 
 build_branch master || exit 1
 build_branch 1.14.0 || exit 1
-build_branch 1.13.0 || exit 1
+# build_branch 1.13.0 || exit 1
