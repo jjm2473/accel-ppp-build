@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
 	cmake gcc libssl-dev liblua5.1-0-dev
 
 ARG ACCEL_PPP_BRANCH=master
+ARG ACCEL_PPP_OS=Debian10
 
 COPY branch/${ACCEL_PPP_BRANCH} /root/accel-ppp
 # RUN cd /root && git clone --depth=1 -b ${ACCEL_PPP_BRANCH} https://github.com/accel-ppp/accel-ppp.git
@@ -25,7 +26,7 @@ RUN cmake \
 	-DBUILD_VLAN_MON_DRIVER=FALSE \
 	-DCMAKE_INSTALL_PREFIX=/usr \
 	-DLUA=TRUE \
-	-DCPACK_TYPE=Debian11 \
+	-DCPACK_TYPE=${ACCEL_PPP_OS} \
 	..
 
 RUN make -j$(nproc)

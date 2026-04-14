@@ -17,8 +17,8 @@ function build_os() {
 	mkdir -p output
 	rm -rf output/temp
 
-	docker build --output type=local,dest=./output/temp/amd64 --platform linux/amd64 -f Dockerfile.$os --build-arg ACCEL_PPP_BRANCH=$branch . || return 1
-	docker build --output type=local,dest=./output/temp/arm64 --platform linux/arm64 -f Dockerfile.$os --build-arg ACCEL_PPP_BRANCH=$branch . || return 1
+	docker build --output type=local,dest=./output/temp/amd64 --platform linux/amd64 -f Dockerfile --build-arg ACCEL_PPP_BRANCH=$branch --build-arg ACCEL_PPP_OS=$os . || return 1
+	docker build --output type=local,dest=./output/temp/arm64 --platform linux/arm64 -f Dockerfile --build-arg ACCEL_PPP_BRANCH=$branch --build-arg ACCEL_PPP_OS=$os . || return 1
 
 	tar -C output/temp -czf "$PWD/output/$output_file" amd64 arm64
 	rm -rf output/temp
@@ -32,7 +32,8 @@ function build_branch() {
 	git -C branch/$branch pull || return 1
 
 	local HASH=$(git -C branch/$branch rev-parse --short HEAD)
-	build_os debian $branch $HASH || return 1
+	build_os Debian12 $branch $HASH || return 1
+	build_os Debian10 $branch $HASH || return 1
 	return 0
 }
 
