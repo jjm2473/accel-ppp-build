@@ -17,8 +17,8 @@ function build_os() {
 	mkdir -p output
 	rm -rf output/temp
 
-	docker build --output type=local,dest=./output/temp/amd64 --platform linux/amd64 -f Dockerfile --build-arg ACCEL_PPP_BRANCH=$branch --build-arg ACCEL_PPP_OS=$os . || return 1
-	docker build --output type=local,dest=./output/temp/arm64 --platform linux/arm64 -f Dockerfile --build-arg ACCEL_PPP_BRANCH=$branch --build-arg ACCEL_PPP_OS=$os . || return 1
+	docker build --output type=local,dest=./output/temp/amd64 --platform linux/amd64 --build-arg ACCEL_PPP_BRANCH=$branch --build-arg ACCEL_PPP_OS=$os . || return 1
+	docker build --output type=local,dest=./output/temp/arm64 --platform linux/arm64 --build-arg ACCEL_PPP_BRANCH=$branch --build-arg ACCEL_PPP_OS=$os . || return 1
 
 	tar -C output/temp -czf "$PWD/output/$output_file" amd64 arm64
 	rm -rf output/temp
